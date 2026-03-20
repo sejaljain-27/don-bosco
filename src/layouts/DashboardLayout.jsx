@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Fingerprint, BarChart2, Settings, Route as RouteIcon, LogOut, X, Shield, Landmark, Globe } from 'lucide-react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Fingerprint, BarChart2, Settings, Route as RouteIcon, LogOut, X, Shield, Landmark, Globe, Menu } from 'lucide-react';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { useLanguage } from '../contexts/LanguageContext';
 import { VoiceAssistant } from '../components/VoiceAssistant';
@@ -28,6 +28,12 @@ export function DashboardLayout({ userProfile, onUpdateProfile }) {
   const [showBankModal, setShowBankModal] = useState(false);
   const [offerDetails, setOfferDetails] = useState({ company: '', salary: '' });
   const [healthDetails, setHealthDetails] = useState({ age: '', coverage: 'Basic' });
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
   
   const [timelineNodes, setTimelineNodes] = useState([
     'Education', 'Internship', 'Employment', 'Growth', 'Legacy'
@@ -168,10 +174,10 @@ export function DashboardLayout({ userProfile, onUpdateProfile }) {
       </div>
 
       {/* Center-Focused Header / Nav */}
-      <nav className="fixed top-0 left-0 right-0 h-20 border-b border-white/[0.04] bg-[#0B0F19]/80 backdrop-blur-md z-50">
-        <div className="max-w-6xl mx-auto h-full px-8 flex items-center justify-between">
-          <div className="flex items-center gap-10">
-            <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+      <nav className="fixed top-0 left-0 right-0 h-20 border-b border-white/[0.04] bg-[#0B0F19]/80 backdrop-blur-md z-[100]">
+        <div className="max-w-6xl mx-auto h-full px-4 sm:px-8 flex items-center justify-between">
+          <div className="flex items-center gap-6 md:gap-10">
+            <div className="flex items-center gap-3 cursor-pointer shrink-0" onClick={() => navigate('/')}>
               <div className="p-1.5 bg-gradient-to-br from-[#4F8CFF] to-[#8B5CF6] rounded-lg">
                 <Fingerprint className="w-5 h-5 text-white" />
               </div>
@@ -197,7 +203,7 @@ export function DashboardLayout({ userProfile, onUpdateProfile }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
             <button 
               onClick={() => setLang(lang === 'en' ? 'hi' : 'en')}
               className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.08] transition-all group"
@@ -206,17 +212,58 @@ export function DashboardLayout({ userProfile, onUpdateProfile }) {
               <span className="text-[10px] font-bold text-[#E6EAF2] uppercase tracking-widest">{lang === 'en' ? 'HI' : 'EN'}</span>
             </button>
 
-            <div className="flex items-center gap-3 pl-6 border-l border-white/[0.08]">
-              <div className="text-right hidden sm:block">
+            <div className="hidden sm:flex items-center gap-3 pl-6 border-l border-white/[0.08]">
+              <div className="text-right">
                 <p className="text-[11px] font-medium text-[#E6EAF2] leading-none mb-1">{userProfile?.name || 'User'}</p>
-                <p className="text-[9px] text-[#9CA3AF] uppercase tracking-widest">{userProfile?.address?.substring(0, 15) || t('identityActive')}...</p>
+                <p className="text-[9px] text-[#9CA3AF] uppercase tracking-widest truncate max-w-[100px]">{userProfile?.address || t('identityActive')}...</p>
               </div>
               <div className="w-9 h-9 rounded-full bg-slate-800 border border-white/[0.1] flex items-center justify-center overflow-hidden">
                 <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${userProfile?.name || 'User'}&backgroundColor=e2e8f0`} alt="Profile" className="w-full h-full object-cover" />
               </div>
             </div>
+
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 text-[#9CA3AF] hover:text-[#E6EAF2] transition-colors"
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Overlay */}
+        {isMobileMenuOpen && (
+          <div className="fixed inset-0 top-20 bg-[#0B0F19] z-[90] md:hidden animate-[fadeIn_0.3s_ease-out]">
+            <div className="flex flex-col p-8 gap-8">
+              {navLinks.map(link => (
+                <NavLink
+                  key={link.name}
+                  to={link.path}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={({ isActive }) => 
+                    `text-2xl font-bold tracking-tight transition-all duration-300 ${
+                      isActive 
+                        ? 'text-[#4F8CFF]' 
+                        : 'text-[#9CA3AF] opacity-60'
+                    }`
+                  }
+                >
+                  {link.name}
+                </NavLink>
+              ))}
+              
+              <div className="mt-auto pt-8 border-t border-white/[0.08] flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-slate-800 border border-white/[0.1] flex items-center justify-center overflow-hidden">
+                  <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${userProfile?.name || 'User'}&backgroundColor=e2e8f0`} alt="Profile" className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-[#E6EAF2]">{userProfile?.name || 'User'}</p>
+                  <p className="text-xs text-[#9CA3AF]">{userProfile?.address || t('identityActive')}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Main Center Content */}

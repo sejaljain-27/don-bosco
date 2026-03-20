@@ -5,7 +5,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 
 export function Domains() {
   const { userProfile, timelineNodes, trustScore } = useOutletContext();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [showForm, setShowForm] = useState(null); // 'kyc', 'insurance', 'loan'
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -86,9 +86,9 @@ export function Domains() {
 
       {/* Auto-Fill Modal Overlay */}
       {showForm && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-[#0B0F19]/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 bg-[#0B0F19]/80 backdrop-blur-sm">
           <div className="absolute inset-0" onClick={() => setShowForm(null)}></div>
-          <div className="glass-panel w-full max-w-xl p-10 relative overflow-hidden animate-[zoomIn_0.4s_cubic-bezier(0.16,1,0.3,1)]">
+          <div className="glass-panel w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 sm:p-10 relative overflow-x-hidden animate-[zoomIn_0.4s_cubic-bezier(0.16,1,0.3,1)]">
             <button 
               onClick={() => setShowForm(null)}
               className="absolute top-8 right-8 text-[#9CA3AF] hover:text-[#E6EAF2] transition-colors"
@@ -117,10 +117,10 @@ export function Domains() {
                 </div>
 
                 <form onSubmit={handleAutoFill} className="space-y-6">
-                  <div className="grid grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                      <label className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-[0.2em] mb-3 block opacity-60">{t('fullName')}</label>
-                      <input readOnly value={userProfile.name} className="w-full bg-white/[0.04] border border-blue-500/30 rounded-xl py-4 px-6 text-[#E6EAF2]/80 text-sm italic" />
+                      <p className="text-[10px] text-[#9CA3AF] uppercase tracking-[0.2em] mb-3 block opacity-60">{lang === 'hi' ? 'पूरा नाम' : 'Full Name'}</p>
+                      <input readOnly value={userProfile?.name || ''} className="w-full bg-white/[0.04] border border-blue-500/30 rounded-xl py-4 px-6 text-[#E6EAF2]/80 text-sm italic" />
                     </div>
                     <div>
                       <label className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-[0.2em] mb-3 block opacity-60">{lang === 'hi' ? 'पहचान एंकर' : 'Identity Anchor'}</label>
@@ -129,15 +129,15 @@ export function Domains() {
                   </div>
 
                   <div>
-                    <label className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-[0.2em] mb-3 block opacity-60">{t('residencyMap')}</label>
-                    <input readOnly value={userProfile.address} className="w-full bg-white/[0.04] border border-blue-500/30 rounded-xl py-4 px-6 text-[#E6EAF2]/80 text-sm italic" />
+                    <label className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-[0.2em] mb-3 block opacity-60">{lang === 'hi' ? 'निवास नक्शा' : 'Residency Map'}</label>
+                    <input readOnly value={userProfile?.address || ''} className="w-full bg-white/[0.04] border border-blue-500/30 rounded-xl py-4 px-6 text-[#E6EAF2]/80 text-sm italic" />
                   </div>
 
                   <div className="p-4 bg-blue-500/5 border border-blue-500/10 rounded-2xl flex items-center gap-4">
                     <FileText className="w-5 h-5 text-blue-400/60" />
                     <div>
                       <p className="text-[11px] text-[#E6EAF2] font-semibold">{t('institutionalContinuity')}</p>
-                      <p className="text-[10px] text-[#9CA3AF]">{timelineNodes.length} nodes successfully cross-referenced.</p>
+                      <p className="text-[10px] text-[#9CA3AF]">{(timelineNodes?.length || 0)} nodes successfully cross-referenced.</p>
                     </div>
                     <div className="ml-auto text-green-500 text-[10px] font-bold uppercase tracking-widest">{lang === 'hi' ? 'जुड़ा हुआ' : 'Linked'}</div>
                   </div>

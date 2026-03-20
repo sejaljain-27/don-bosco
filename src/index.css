@@ -38,11 +38,11 @@
   }
   
   .premium-header {
-    @apply text-4xl md:text-5xl font-semibold tracking-tight text-[#E6EAF2] mb-4;
+    @apply text-2xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-[#E6EAF2] mb-4;
   }
   
   .premium-sub {
-    @apply text-base text-[#9CA3AF] font-light leading-relaxed;
+    @apply text-sm sm:text-base text-[#9CA3AF] font-light leading-relaxed;
   }
 }
 
@@ -91,4 +91,12 @@
     @apply opacity-100;
     animation-duration: 2s;
   }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
